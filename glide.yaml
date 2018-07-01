@@ -1,0 +1,10 @@
+package: github.com/dbarzdys/docktest
+import:
+- package: github.com/fsouza/go-dockerclient
+  version: ~1.2.2
+- package: github.com/pkg/errors
+  version: ~0.8.0
+- package: github.com/spf13/cobra
+  version: ~0.0.3
+- package: gopkg.in/yaml.v2
+  version: ~2.2.1
