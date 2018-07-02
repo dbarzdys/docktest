@@ -19,6 +19,7 @@ func getOrder(m map[string]config.Service) ([]string, error) {
 		nodes = append(nodes, k)
 	}
 	graph := toposort.NewGraph(len(nodes))
+	graph.AddNodes(nodes...)
 	for k, v := range m {
 		for _, d := range v.DependsOn {
 			graph.AddEdge(k, d)
@@ -28,7 +29,11 @@ func getOrder(m map[string]config.Service) ([]string, error) {
 	if !ok {
 		return nil, errors.New("circular dependency detected")
 	}
-	return res, nil
+	redo := make([]string, len(res))
+	for i, v := range res {
+		redo[len(res)-1-i] = v
+	}
+	return redo, nil
 }
 
 type Container struct {
