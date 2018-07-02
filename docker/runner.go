@@ -92,7 +92,7 @@ func (r runner) Run(services map[string]config.Service) (
 							found = i
 						}
 					}
-					if found == -1 && path[2] != "ip" {
+					if found == -1 || path[2] != "ip" {
 						return original
 					}
 					return containers[found].IP
