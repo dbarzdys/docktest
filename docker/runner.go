@@ -3,50 +3,32 @@ package docker
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"os"
-	"sort"
 	"strings"
 
 	"github.com/dbarzdys/docktest/config"
 	dc "github.com/fsouza/go-dockerclient"
+	toposort "github.com/philopon/go-toposort"
 )
 
-type DepList struct {
-	Map   map[string]config.Service
-	Order []string
-}
-
-func NewDepList(m map[string]config.Service) DepList {
-	order := make([]string, 0)
-	for k := range m {
-		order = append(order, k)
+func getOrder(m map[string]config.Service) ([]string, error) {
+	nodes := make([]string, 0)
+	for k, _ := range m {
+		nodes = append(nodes, k)
 	}
-	dl := DepList{
-		Map:   m,
-		Order: order,
-	}
-	return dl
-}
-
-func (list *DepList) Len() int {
-	return len(list.Order)
-}
-
-func (list *DepList) Less(i, j int) bool {
-	iv := list.Map[list.Order[i]]
-	for _, d := range iv.DependsOn {
-		if d == list.Order[j] {
-			return false
+	graph := toposort.NewGraph(len(nodes))
+	for k, v := range m {
+		for _, d := range v.DependsOn {
+			graph.AddEdge(k, d)
 		}
 	}
-	return true
-}
-
-func (list *DepList) Swap(i, j int) {
-	tmp := list.Order[i]
-	list.Order[i] = list.Order[j]
-	list.Order[j] = tmp
+	res, ok := graph.Toposort()
+	if !ok {
+		return nil, errors.New("circular dependency detected")
+	}
+	return res, nil
 }
 
 type Container struct {
@@ -72,10 +54,12 @@ func (r runner) Run(services map[string]config.Service) (
 	[]Container,
 	error,
 ) {
-	dl := NewDepList(services)
-	sort.Sort(&dl)
+	order, err := getOrder(services)
+	if err != nil {
+		return nil, err
+	}
 	containers := make([]Container, 0)
-	for _, name := range dl.Order {
+	for _, name := range order {
 		svc := services[name]
 		for k, v := range svc.Env {
 			v = os.Expand(v, func(s string) string {
@@ -92,7 +76,7 @@ func (r runner) Run(services map[string]config.Service) (
 							found = i
 						}
 					}
-					if found == -1 || path[2] != "ip" {
+					if found == -1 && path[2] != "ip" {
 						return original
 					}
 					return containers[found].IP

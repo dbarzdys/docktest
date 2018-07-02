@@ -1,5 +1,5 @@
-hash: fd87c40e6edd4c070fae19f74c928c753bf730fe0568f978ba162d71746e8ceb
-updated: 2018-07-01T15:18:33.841328681+03:00
+hash: 2216b5a71bce937f8690cc7a4e307d1bc8008dc2ef420a9718a7e043cd8a2981
+updated: 2018-07-02T18:31:42.904096314+03:00
 imports:
 - name: github.com/Azure/go-ansiterm
   version: d6e3b3328b783f23731bc4d058875b0371ff8109
@@ -66,6 +66,8 @@ imports:
   version: ec9bf5058614525576e60e210a4e645bbd4d8335
   subpackages:
   - libcontainer/user
+- name: github.com/philopon/go-toposort
+  version: 9be86dbd762f98b5b9a4eca110a3f40ef31d0375
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/sirupsen/logrus

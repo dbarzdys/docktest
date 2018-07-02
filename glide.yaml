@@ -2,6 +2,7 @@ package: github.com/dbarzdys/docktest
 import:
 - package: github.com/fsouza/go-dockerclient
   version: ~1.2.2
+- package: github.com/philopon/go-toposort
 - package: github.com/pkg/errors
   version: ~0.8.0
 - package: github.com/spf13/cobra
