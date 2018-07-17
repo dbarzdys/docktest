@@ -8,11 +8,11 @@ import (
 )
 
 type Service struct {
-	Image       string            `yaml:"image"`
-	Tag         string            `yaml:"tag"`
-	Env         map[string]string `yaml:"env"`
-	DependsOn   []string          `yaml:"depends_on"`
-	HealthCheck []string          `yaml:"health_check"`
+	Image     string            `yaml:"image"`
+	Tag       string            `yaml:"tag"`
+	Env       map[string]string `yaml:"env"`
+	DependsOn []string          `yaml:"depends_on"`
+	WaitOn    string            `yaml:"wait_on"`
 }
 
 type Config struct {

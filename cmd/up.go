@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 	"path"
+	"time"
 
 	"github.com/dbarzdys/docktest/docker"
 	"github.com/dbarzdys/docktest/export"
@@ -25,6 +26,7 @@ import (
 )
 
 var exportFile *string
+var timeout *time.Duration
 
 // upCmd represents the up command
 var upCmd = &cobra.Command{
@@ -75,14 +77,21 @@ var upCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		fmt.Println("Waiting for containers")
+		waiter := docker.NewWaiter()
+		if err = waiter.Wait(cfg.Services, containers); err != nil {
+			fmt.Printf("Got error while waiting: %v\n", err)
+			return
+		}
 		fmt.Printf("DockTest started with %d containers\n", len(containers))
-		return nil
+		return
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(upCmd)
-	exportFile = upCmd.Flags().StringP("export_file", "e", "./docktest.env", "Variable export file location")
+	exportFile = upCmd.Flags().StringP("export_file", "e", "./docktest.env", "Export file location")
+	timeout = upCmd.Flags().DurationP("timeout", "t", time.Second*10, "Timeout duration")
 
 	// Here you will define your flags and configuration settings.
 

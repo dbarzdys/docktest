@@ -110,6 +110,26 @@ func initConfig() (err error) {
 			})
 			svc.Env[k] = v
 		}
+		svc.WaitOn = os.Expand(svc.WaitOn, func(s string) string {
+			original := fmt.Sprintf("${%s}", s)
+			path := strings.Split(s, ".")
+			if len(path) == 0 {
+				return original
+			}
+			switch path[0] {
+			case "constants":
+				if len(path) > 2 {
+					return original
+				}
+				found, ok := cfg.Constants[path[1]]
+				if !ok {
+					return original
+				}
+				return found
+			default:
+				return original
+			}
+		})
 		cfg.Services[name] = svc
 	}
 	return

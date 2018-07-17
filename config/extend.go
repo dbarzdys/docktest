@@ -68,7 +68,7 @@ func extendServices(to, from map[string]Service) map[string]Service {
 			found.Image = extendString(found.Image, v.Image)
 			found.Tag = extendString(found.Tag, v.Tag)
 			found.DependsOn = extendStringSlice(found.DependsOn, v.DependsOn)
-			found.HealthCheck = extendStringSlice(found.HealthCheck, v.HealthCheck)
+			found.WaitOn = extendString(found.WaitOn, v.WaitOn)
 		}
 		to[k] = found
 	}

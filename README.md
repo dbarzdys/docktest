@@ -15,18 +15,19 @@ Use docker to run integration tests againts other services.
     Use docker to run integration tests againts other services.
 
     Usage:
-    docktest [command]
+      docktest [command]
 
     Available Commands:
-    exec        Spin-up test containers and export variables to next command
-    help        Help about any command
-    rm          Removes containers created by DockTest
-    up          Spin up test containers and export variables to .env file
-    version     Show DockTest version information
+      exec        Spin-up test containers and export variables to next command
+      help        Help about any command
+      pull        Pull images
+      rm          Removes containers created by DockTest
+      up          Spin up test containers and export variables to .env file
+      version     Show DockTest version information
 
     Flags:
-    -c, --config string   config file (default "./docktest.yaml")
-    -h, --help            help for docktest
+      -c, --config string   config file (default "./docktest.yaml")
+      -h, --help            help for docktest
 
     Use "docktest [command] --help" for more information about a command.
 
@@ -62,6 +63,7 @@ services:
   postgres:
     image: awpc/postgres
     tag: 9.6
+    wait_on: ${constants.DB_PORT}
     env:
       POSTGRES_USER: ${constants.DB_USER}
       POSTGRES_PASSWORD: ${constants.DB_PASS}
@@ -70,6 +72,7 @@ services:
   zipkin:
     image: openzipkin/zipkin
     tag: latest
+    wait_on: ${zipkin.ZIPKIN_PORT}
     env:
       STORAGE_TYPE: mem
 
