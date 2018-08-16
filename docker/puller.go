@@ -1,6 +1,7 @@
 package docker
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/dbarzdys/docktest/config"
@@ -24,10 +25,14 @@ func (p puller) Pull(m map[string]config.Service) error {
 	if err != nil {
 		return err
 	}
-	var auth dc.AuthConfiguration
+	var auth *dc.AuthConfiguration
 	for _, cfg := range authMap.Configs {
-		auth = cfg
+		auth = &cfg
 		break
+	}
+	if auth == nil {
+		err = errors.New("could not find any docker configuration")
+		return err
 	}
 	for _, svc := range m {
 		if svc.Tag == "" {
@@ -39,7 +44,7 @@ func (p puller) Pull(m map[string]config.Service) error {
 		}
 		fmt.Printf("pulling: %s:%s\n", svc.Image, svc.Tag)
 
-		err = p.client.PullImage(opts, auth)
+		err = p.client.PullImage(opts, *auth)
 		if err != nil {
 			err = fmt.Errorf("got error while pulling image: %v", err)
 			return err
